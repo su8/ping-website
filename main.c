@@ -23,6 +23,15 @@
 
 #include <curl/curl.h>
 
+static size_t read_ping_data_cb(char *, size_t, size_t, char *);
+
+static size_t 
+read_ping_data_cb(char *data, size_t size, size_t nmemb, char *str1) {
+  (void)data;
+  (void)str1;
+  return (nmemb * size);
+}
+
 int main(int argc, char *argv[]) {
   double total = 0.0;
 
@@ -47,6 +56,7 @@ int main(int argc, char *argv[]) {
   curl_easy_setopt(curl, CURLOPT_USERAGENT, "ping-website/1.0");
   curl_easy_setopt(curl, CURLOPT_USE_SSL, (long)CURLUSESSL_ALL); 
   curl_easy_setopt(curl, CURLOPT_TIMEOUT, 20L);
+  curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, read_ping_data_cb);
 
   res = curl_easy_perform(curl);
   if (CURLE_OK != res) {
